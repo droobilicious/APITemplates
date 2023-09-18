@@ -20,6 +20,7 @@ router.use((err, req, res, next) => {
   console.log("V1 API error handler error handler. Status:", err.status);
   
   // render the error page
+  // ** use json response here?
   res.status(err.status || 500);
   res.send( 'There was an error (v1). Status: ' + err.status );
 
