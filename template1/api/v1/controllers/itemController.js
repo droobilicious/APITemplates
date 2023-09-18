@@ -4,19 +4,19 @@ const itemService = require("../services/itemService");
 
 
 // Get all items
-    const getAllItems = (req, res) => {
-        console.log("itemController getAllItems");
-        try {
-            const allItems = itemService.getAllItems();
-            res.send({ status: "OK", data: allItems });
-        }catch (error) {
-            res
-              .status(error?.status || 500)
-              .send({ status: "FAILED", data: { error: error?.message || error } });
-        }
+const getAllItems = (req, res) => {
+    console.log("itemController getAllItems");
+    try {
+        const allItems = itemService.getAllItems();
+        res.send({ status: "OK", data: allItems });
+    }catch (error) {
+        res
+            .status(error?.status || 500)
+            .send({ status: "FAILED", data: { error: error?.message || error } });
+    }
 
 
-    };
+};
  
 
 // Create new item - C

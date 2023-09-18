@@ -1,23 +1,24 @@
 
 
 
+
+# Best practices
+
+[ ] Versioning
+[ ] Name resources in plural
+[ ] Accept and respond with data in JSON format
+[ ] Respond with standard HTTP Error Codes
+[ ] Avoid verbs in endpoint names
+[ ] Group associated resources together
+[ ] Integrate filtering, sorting & pagination
+[ ] Use data caching for performance improvements
+[ ] Good security practices
+[ ] Document your API properly
+
 Standard API template
 
 Sources:
 https://www.freecodecamp.org/news/rest-api-design-best-practices-build-a-rest-api/
-
-
-
-# Info
-- Layers
-   - Routes - handle directing the request to a controller
-   - Controller - parses details from request and does validation
-   - Service - The business logic, exports methods that are used by the controller
-   - Data Access Layer -  used by the service layer to interact with the database
-- Anything below Controller returns an error with Throw() and then the controller turns that into a json response
-
-
-
 
 
 # testring
