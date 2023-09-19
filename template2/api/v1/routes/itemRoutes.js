@@ -4,11 +4,10 @@ const express = require("express");
 
 //Validation
 const { checkSchema } = require("express-validator"); //for validation
-const signInSchema = require("../validationSchema/signupSchema");
+const itemSchema = require("../validationSchema/itemSchema");
 
 //Authentication
-const { checkAuthentication } = require('../.services/authService'); ???
-
+//const { checkAuthentication } = require('../.services/authService'); //???
 
 
 
@@ -18,8 +17,23 @@ const itemsController = require("../controllers/itemController");
 //load router
 const router = express.Router();
 
-// get all
-router.get("/", checkAuthentication, itemsController.getAllItems);
+
+
+/**
+* @api {post} /api/items List All Items
+* @apiName List All Items
+* @apiPermission user
+* @apiGroup User
+*
+* @apiParam  {String} [userName] username
+* @apiParam  {String} [email] Email
+* @apiParam  {String} [phone] Phone number
+* @apiParam  {String} [status] Status
+*
+* @apiSuccess (200) {Object} mixed `User` object
+*/
+
+router.get("/", itemsController.getAllItems); //checkAuthentication
 
 //create one - C
 router.post("/", checkSchema(itemSchema), itemsController.createNewItem);

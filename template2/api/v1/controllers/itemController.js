@@ -1,6 +1,10 @@
 // In src/api/v1/controllers/itemController.js
 
+// Service
 const itemService = require("../services/itemService");
+
+// Validation
+const { validationResult } = require('express-validator'); //for form validatio
 
 
 // Get all items
@@ -24,24 +28,25 @@ const createNewItem = (req, res) => {
     console.log("itemController createNewItem");
     const { body } = req;
 
-    //validate
-    if (
-        !body.name ||
-        !body.owner_id ||
-        !Number.isInteger(body.owner_id)
-    ){
-        console.log("failed validation");
-        res
-            .status(400)
-            .send({
+    //get validation result
+    const result = validationResult(req);
+    
+    if (!result.isEmpty())
+    {
+        console.log("Data was not valid");
+        // ** transform errors to fit standard format?
+        res.status(400)
+           .send({
                     status: "FAILED",
                     data: {
                         error:
                         "Validation of the new item failed",
+                        errors: result.errors 
                     },
                 }
             );
         return;
+       
     }
 
     // validation passed

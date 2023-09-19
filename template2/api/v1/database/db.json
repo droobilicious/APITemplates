@@ -1,4 +1,14 @@
 {
+  "users": [
+    {
+      "id": "8a0fe63c-36de-4977-a19a-20ea399366b5",
+      "username": "user1",
+      "email": "user1@mail.com",
+      "hashed_password": "7c6a180b36896a0a8c02787eeafb0e4c",
+      "createdAt": "9/19/2023, 6:48:13 PM",
+      "updatedAt": "9/19/2023, 6:48:13 PM"
+    }
+  ],
   "items": [
     {
       "id": 1,
@@ -60,6 +70,13 @@
       "id": "ff015d41-c40a-430c-a186-4ec9bf710b44",
       "createdAt": "9/17/2023, 4:53:54 PM",
       "updatedAt": "9/17/2023, 4:53:54 PM"
+    },
+    {
+      "name": "item14",
+      "owner_id": 1,
+      "id": "36db8689-728f-4128-8427-6388a7e78013",
+      "createdAt": "9/19/2023, 6:00:52 PM",
+      "updatedAt": "9/19/2023, 6:00:52 PM"
     }
   ],
   "tags": [

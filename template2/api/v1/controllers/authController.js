@@ -1,6 +1,8 @@
 // In src/api/v1/controllers/authController.js
 
-const itemService = require("../services/authService");
+const authService = require("../services/authService");
+
+
 
 
 // Validation
@@ -16,26 +18,22 @@ const doLogin = (req, res) => {
     //get validation result
     const result = validationResult(req);
 
-
-    
-    //validate input
-    if (
-        !body.name ||
-        !body.owner_id ||
-        !Number.isInteger(body.owner_id)
-    ){
-        console.log("failed validation");
-        res
-            .status(400)
-            .send({
+    if (!result.isEmpty()) 
+    {
+        console.log("Data was not valid");
+        // ** transform errors to fit standard format?
+        res.status(400)
+           .send({
                     status: "FAILED",
                     data: {
                         error:
-                        "Validation of the new item failed",
+                        "Login data was not correct",
+                        errors: result.errors 
                     },
                 }
             );
         return;
+       
     }
 
     // validation passed
@@ -48,8 +46,8 @@ const doLogin = (req, res) => {
 
     // create the item or return an error
     try {
-        const createdItem = itemService.createNewItem(newItem);
-        res.status(201).send({ status: "OK", data: createdItem });
+        //const createdItem = authService.doLogin(newItem);
+        res.status(201).send({ status: "OK", data: '' });
     }
     catch (error) {
         res
@@ -60,45 +58,57 @@ const doLogin = (req, res) => {
 };
 
 
- 
 
 //  Sign up
-const doSignup = (req, res) => {
-    console.log("authController doSignup");
+const doSignUp = (req, res) => {
+
+    console.log("authController doSignUp");
     const { body } = req;
 
+    //get validation result
+    const result = validationResult(req);
+    console.log("authController doSignUp: Validation result:" , JSON.stringify(result));
+
     //validate input
-    if (
-        !body.name ||
-        !body.owner_id ||
-        !Number.isInteger(body.owner_id)
-    ){
-        console.log("failed validation");
-        res
-            .status(400)
-            .send({
+    if (!result.isEmpty()) 
+    {
+        console.log("Data was not valid");
+        // ** transform errors to fit standard format?
+        res.status(400)
+           .send({
                     status: "FAILED",
                     data: {
                         error:
-                        "Validation of the new item failed",
+                        "Validation of the new user failed",
+                        errors: result.errors 
                     },
                 }
             );
         return;
+       
     }
 
     // validation passed
-    
-    //create new item
-    const newItem = {
-        name: body.name,
-        owner_id: body.owner_id
+     console.log("authController doSignUp: Validation Passed");
+
+    /* build new user
+        in production we would
+        - use a proper hashing mechanism e.g. crypto.pbkdf2()
+        - use a salt/pepper
+        
+        crypto.pbkdf2()
+    */
+    const newUser = {
+        username: body.username,
+        email: body.email,
+        password:  body.password
     };
+
 
     // create the item or return an error
     try {
-        const createdItem = itemService.createNewItem(newItem);
-        res.status(201).send({ status: "OK", data: createdItem });
+        const createdUser = authService.doSignUp(newUser);
+        res.status(201).send({ status: "OK", data: createdUser });
     }
     catch (error) {
         res
@@ -127,8 +137,8 @@ const doTokenExchange = (req, res) => {
     }
 
     try {
-        const item = itemService.getOneItem(itemId);
-        res.send({ status: "OK", data: item });
+        //const item = itemService.getOneItem(itemId);
+        res.send({ status: "OK", data: '' });
     }
     catch (error) {
         res
@@ -141,6 +151,6 @@ const doTokenExchange = (req, res) => {
  
 module.exports = {
     doLogin,
-    doSignup, 
+    doSignUp, 
     doTokenExchange, 
 };

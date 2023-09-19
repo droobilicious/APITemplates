@@ -1,26 +1,102 @@
-// In src/api/v1/services/itemService.js
+// In src/api/v1/services/authService.js
  
-const itemDB = require("../database/itemDatabase");
+const authDB = require("../database/authDatabase");
 const { v4: uuid } = require("uuid");
+const crypto = require('crypto')
 
-/* get all items */
-const getAllItems = () => {
-  console.log("itemService getAllItems ");
-    try {
-      const allItems = itemDB.getAllItems();
-      return allItems;
-    }
-    catch (error) {
-      throw error;
-    }
+
+const passportCallback = function(err, userData, info){
+    
+  //eror authenticating
+  if (err) { 
+      //send an error
+      // return next(err);  
+  }
+
+  if (!userData) {    /*send an error */ }
+
+  // Login Token Creation process
+  //create token containing limited information from the user
+  let payload = { 
+      id: userData.id,
+      username: userData.username
+  };
+
+  // Sign the token
+  const tokenOptions ={
+    algorithm: "aes-128-ctr",
+    expiresIn:  "360m"
+  }
+  const signedJWT = jwt.sign(payload, PRIV_KEY,tokenOptions );
+  const refreshToken = crypto.randomBytes( 64 ).toString('hex');
+
+  // return user info and a token
+  // not as res though probably
+  res.json({ 
+      success: true,
+      message: 'Login Succeeded', 
+      user: {'test' : 123},  //include user data and token here?
+      token: signedJWT, 
+      refreshToken
+  });
+
+
+  }; //end of passport authenticate
+
+/* doLogin- C */
+const doLogin = (creds) => {
+  console.log("authService doLogin ", JSON.stringify(creds));
+
+
+  /* first need to load passport strategies */
+
+  passport.authenticate('local', passportCallback )(req, res, next)
+
+
+
+  //creatae the item or return an error
+  try {
+    //const createdItem = authDB.createNewItem(itemToInsert);
+    return {test: 'test'};
+  } catch (error) {
+    throw error;
+  }
 
 };
-
-
+ 
 
 /* Create a new Item - C */
-const createNewItem = (newItem) => {
-  console.log("itemService createNewItem ", JSON.stringify(newItem));
+const doSignUp = (newUser) => {
+  console.log("authService doSignUp ", JSON.stringify(newUser));
+
+  const userToInsert= {
+    id: uuid(),
+    username: newUser.username,
+    email: newUser.email,
+    hashed_password:  crypto.createHash('md5').update(newUser.password).digest("hex"),
+    createdAt: new Date().toLocaleString("en-US", { timeZone: "UTC" }),
+    updatedAt: new Date().toLocaleString("en-US", { timeZone: "UTC" }),
+  };
+ 
+
+  //create the item or return an error
+  try {
+    const createdItem = authDB.doSignUp(userToInsert);
+
+    // return logged in token
+
+    return {test: 'test'};
+  } catch (error) {
+    throw error;
+  }
+
+};
+ 
+
+ 
+/* Create a new Item - C */
+const doTokenExchange = (token) => {
+  console.log("authService doTokenExchange ", JSON.stringify(token));
 
   const itemToInsert = {
     ...newItem,
@@ -40,44 +116,8 @@ const createNewItem = (newItem) => {
 };
  
 
-/* get a single item by id - R */
-const getOneItem = (itemId) => {
-  console.log("itemService getOneItem ", JSON.stringify(itemId));
-  try {
-    const item = itemDB.getOneItem(itemId);
-    return item;
-  } catch (error) {
-    throw error;
-  }
-
-};
-/* Update an item - U */
-const updateOneItem = (itemId, changes) => {
-  console.log("itemService updateOneItem ", JSON.stringify(itemId));
-  try {
-    const updatedItem = itemDB.updateOneItem(itemId, changes);
-    return updatedItem;
-  } catch (error) {
-    throw error;
-  }
-};
- 
-/* Delete an item - D*/
-const deleteOneItem = (itemId) => {
-  console.log("itemService deleteOneItem ", JSON.stringify(itemId));
-  try {
-    itemDB.deleteOneItem(itemId);
-    
-  } catch (error) {
-    throw error;
-  }
-};
-
- 
 module.exports = {
-  getAllItems,
-  createNewItem, // C
-  getOneItem,    // R
-  updateOneItem, // U
-  deleteOneItem, // D
+  doLogin,
+  doSignUp, 
+  doTokenExchange, 
 };

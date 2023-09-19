@@ -6,6 +6,8 @@ const router = express.Router();
 const routes = require("./routes/");
 
 
+router.use("/auth", routes.authRoutes);
+router.use("/users", routes.userRoutes);
 router.use("/items", routes.itemRoutes);
 router.use("/tags", routes.tagRoutes);
 
