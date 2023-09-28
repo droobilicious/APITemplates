@@ -8,8 +8,11 @@
       "test": "echo \"Error: no test specified\" && exit 1"
    },
    "nodemonConfig": {
-      "ignore": ["db.json", "api/v1/database/db.json"]
-    },  
+      "ignore": [
+         "db.json",
+         "api/v1/database/db.json"
+      ]
+   },
    "author": "",
    "license": "ISC",
    "dependencies": {

@@ -14,7 +14,6 @@ const doLogin = (req, res) => {
     console.log("authController doLogin");
     const { body } = req;
 
-    
     //get validation result
     const result = validationResult(req);
 
@@ -39,15 +38,16 @@ const doLogin = (req, res) => {
     // validation passed
     
     //create new item
-    const newItem = {
-        name: body.name,
-        owner_id: body.owner_id
+    const loginAttempt = {
+        username: body.username,
+        password: body.password
     };
 
     // create the item or return an error
     try {
-        //const createdItem = authService.doLogin(newItem);
-        res.status(201).send({ status: "OK", data: '' });
+        const loginResult = authService.doLogin(loginAttempt);
+
+        res.status(201).send({ status: "OK", data: loginResult });
     }
     catch (error) {
         res
@@ -89,15 +89,8 @@ const doSignUp = (req, res) => {
     }
 
     // validation passed
-     console.log("authController doSignUp: Validation Passed");
+    console.log("authController doSignUp: Validation Passed");
 
-    /* build new user
-        in production we would
-        - use a proper hashing mechanism e.g. crypto.pbkdf2()
-        - use a salt/pepper
-        
-        crypto.pbkdf2()
-    */
     const newUser = {
         username: body.username,
         email: body.email,

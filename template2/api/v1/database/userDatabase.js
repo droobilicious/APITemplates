@@ -3,14 +3,28 @@
 const DB = require("./db.json");
 const { saveToDatabase } = require("./utils");
 
+var db = require("./database.js")
+
+
 /* get all users */
-  const getAllUsers = () => {
+  const getAllUsers = async () => {
     console.log("userDatabase getAllUsers");
-    try {
-      return DB.users;
-    } catch (error) {
+
+
+    let sql = "select * from users"
+    let params = []
+
+    const [data, error] = await db.query(sql, params);
+
+    if (error){
+      console.log("userDatabase getAllUsers error")
       throw { status: 500, message: error };
     }
+
+    console.log("userDatabase getAllUsers data:", JSON.stringify(data));
+    return data;
+
+
   };
 
 

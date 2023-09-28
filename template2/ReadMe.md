@@ -1,5 +1,9 @@
 
 
+# Sources
+- https://www.freecodecamp.org/news/rest-api-design-best-practices-build-a-rest-api/#name-resources-in-plural
+- https://developerhowto.com/2018/12/29/build-a-rest-api-with-node-js-and-express-js/
+
 # Features
 [x] CRUD operations on 2 endpoints
 [x] Layred architecture
@@ -7,6 +11,9 @@
 [x] API Versioning
 [x] Standard error handling
 [x] Version sepcific error handlers
+[ ] database with sqllite
+[ ] async requests to database
+    - https://blog.pagesd.info/2019/10/29/use-sqlite-node-async-await/
 [ ] authentication with passport
    - create strategies
    - use strategies to authenticate
@@ -18,13 +25,14 @@
    - applied at route level?
    - maybe  ORM model will do some validation in later versions
 [ ] cross over endpoints?  Scoping of nested endpoints?
-
+[ ] generic route/controller/service?
+[ ] unit testing  Mocha and Chai
 
 
 next version?
 [ ] Integrate filtering, sorting & pagination
 [ ] ORM
-[ ] async database
+
 [ ] inline-documentation
    - APIDOC
    - Swagger
@@ -39,8 +47,14 @@ next version?
    - Controller 
       - parses details from request and does validation
       - no HTTP activity lower than this layer
-   - Service - The business logic, exports methods that are used by the controller
-   - Data Access Layer -  used by the service layer to interact with the database
+      - wraps error from further down the stack in an appropriate JSON response
+      - each controller returns either an OK status with the result, or an ERROR status with error details
+   - Service 
+      - The business logic, exports methods that are used by the controller
+   - Data Access Layer 
+      - used by the service layer to interact with the database
+
+
 - Modules used
    - cors  - Cross Origin Resource Sharing
    - dotenv  - Config management

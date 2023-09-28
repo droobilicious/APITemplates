@@ -3,10 +3,16 @@
 const authDB = require("../database/authDatabase");
 const { v4: uuid } = require("uuid");
 const crypto = require('crypto')
+const passport = require('passport');
+
+
+
+
 
 
 const passportCallback = function(err, userData, info){
-    
+  console.log("passportCallback");
+  console.log("userdata: ", JSON.stringify(userData));
   //eror authenticating
   if (err) { 
       //send an error
@@ -45,19 +51,22 @@ const passportCallback = function(err, userData, info){
 
 /* doLogin- C */
 const doLogin = (creds) => {
+
   console.log("authService doLogin ", JSON.stringify(creds));
 
 
   /* first need to load passport strategies */
-
-  passport.authenticate('local', passportCallback )(req, res, next)
-
+  //passport.authenticate('local', passportCallback )(req, res, next)
+  
 
 
   //creatae the item or return an error
   try {
     //const createdItem = authDB.createNewItem(itemToInsert);
+    passport.authenticate('local', passportCallback ); //this will call passport verify function
+
     return {test: 'test'};
+    
   } catch (error) {
     throw error;
   }
@@ -68,6 +77,14 @@ const doLogin = (creds) => {
 /* Create a new Item - C */
 const doSignUp = (newUser) => {
   console.log("authService doSignUp ", JSON.stringify(newUser));
+
+  /* build new user
+        in production we would
+        - use a proper hashing mechanism e.g. crypto.pbkdf2()
+        - use a salt/pepper
+        
+        crypto.pbkdf2()
+  */
 
   const userToInsert= {
     id: uuid(),
@@ -81,11 +98,11 @@ const doSignUp = (newUser) => {
 
   //create the item or return an error
   try {
-    const createdItem = authDB.doSignUp(userToInsert);
+    //create and return user
+    // ** also return login token
+    const createdUser = authDB.doSignUp(userToInsert);
+    return createdUser;
 
-    // return logged in token
-
-    return {test: 'test'};
   } catch (error) {
     throw error;
   }

@@ -3,20 +3,50 @@
 const userService = require("../services/userService");
 
 
+
 // Get all users
-const getAllUsers = (req, res) => {
-   console.log("userController getAllUsers");
-   try {
-      const allUsers = userService.getAllUsers();
-      res.send({ status: "OK", data: allUsers });
-   }catch (error) {
-      res
-         .status(error?.status || 500)
-         .send({ status: "FAILED", data: { error: error?.message || error } });
-   }
+const getAllUsers = async (req, res) => {
+    console.log("userController getAllUsers");
+ 
+    try{
+        console.log("Getting users");
+
+        const data = userService.getAllUsers();
+        onsole.log("userController getAllUsers: data:", JSON.stringify(data));
+        res.send({ status: "OK", data: data });
+
+    }catch(error){
+        console.log("userController getAllUsers: error getting users")
+        res
+            .status(error?.status || 500)
+            .send({ status: "FAILED", data: { error: error?.message || error } });
+
+    }
+ 
 
 
-};
+ };
+
+ 
+ const getAllUsers2 = async (req, res) => {
+    console.log("userController getAllUsers");
+ 
+    try{
+        console.log("Getting users");
+        const result = await db.query( "selecct * from users", []);
+        res.send({ status: "OK", data: result });
+    }catch(error){
+        console.log("error getting users")
+        res
+            .status(error?.status || 500)
+            .send({ status: "FAILED", data: { error: error?.message || error } });
+
+    }
+ 
+ };
+
+ 
+
 
 
 // Create new user - C

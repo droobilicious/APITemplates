@@ -7,6 +7,22 @@
       "hashed_password": "7c6a180b36896a0a8c02787eeafb0e4c",
       "createdAt": "9/19/2023, 6:48:13 PM",
       "updatedAt": "9/19/2023, 6:48:13 PM"
+    },
+    {
+      "id": "8a69bcae-8f76-4c1a-b598-1aed29339106",
+      "username": "user4",
+      "email": "user4@mail.com",
+      "hashed_password": "7c6a180b36896a0a8c02787eeafb0e4c",
+      "createdAt": "9/22/2023, 3:35:00 PM",
+      "updatedAt": "9/22/2023, 3:35:00 PM"
+    },
+    {
+      "id": "e8a63724-891a-49f5-814c-e2ab0b091bf6",
+      "username": "user3",
+      "email": "user3@mail.com",
+      "hashed_password": "7c6a180b36896a0a8c02787eeafb0e4c",
+      "createdAt": "9/22/2023, 3:35:51 PM",
+      "updatedAt": "9/22/2023, 3:35:51 PM"
     }
   ],
   "items": [

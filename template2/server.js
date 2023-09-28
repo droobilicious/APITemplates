@@ -18,6 +18,15 @@ app.use(cors());
 app.use(express.json()); // parse Content-Type: application/json
 app.use(express.urlencoded({ extended: true }));  // parse ‘content-type: application/x-www-form-urlencoded’  with body e.g. {“name”:”GeeksforGeeks”}, 
 
+
+/* passport */
+const passportStrategies = require('./api/v1/authenticationStrategies/localStrategy.js'); 
+//app.use( passportStrategies.initialize() );  //passport authentication strategies
+  
+
+
+
+
 /* custom middleware */
 app.use((req, res, next) => {
   /*

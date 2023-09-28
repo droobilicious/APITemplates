@@ -3,16 +3,23 @@
 const userDB = require("../database/userDatabase");
 const { v4: uuid } = require("uuid");
 
+//var db = require("../database/database.js")
+
+
+
 /* get all users */
 const getAllUsers = () => {
   console.log("userService getAllUsers ");
-    try {
-      const allUsers = userDB.getAllUsers();
-      return allUsers;
-    }
-    catch (error) {
-      throw error;
-    }
+
+  try {
+    const allUsers = userDB.getAllUsers();
+    console.log("userService getAllUsers returning all users ", JSON.stringify(allUsers));
+    return allUsers;
+  }
+  catch (error) {
+    console.log("userService getAllUsers: error ");
+    throw error;
+  }
 
 };
 
