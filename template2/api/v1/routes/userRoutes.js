@@ -5,6 +5,11 @@ const express = require("express");
 //load controller
 const usersController = require("../controllers/userController");
 
+//Validation
+const { checkSchema } = require("express-validator"); //for validation
+const userSchema = require("../validationSchema/userSchema");
+
+
 //load router
 const router = express.Router();
 
@@ -12,7 +17,7 @@ const router = express.Router();
 router.get("/", usersController.getAllUsers);
 
 //create one - C
-router.post("/", usersController.createNewUser);
+router.post("/", checkSchema(userSchema), usersController.createNewUser);
 
 // get one - R
 router.get("/:userId", usersController.getOneUser);

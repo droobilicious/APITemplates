@@ -4,10 +4,10 @@ const tagDB = require("../database/tagDatabase");
 const { v4: uuid } = require("uuid");
 
 /* get all tags */
-const getAllTags = () => {
+const getAllTags = async () => {
   console.log("tagService getAllTags ");
     try {
-      const allTags = tagDB.getAllTags();
+      const allTags = await tagDB.getAllTags();
       return allTags;
     }
     catch (error) {
@@ -19,7 +19,7 @@ const getAllTags = () => {
 
 
 /* Create a new Tag - C */
-const createNewTag = (newTag) => {
+const createNewTag = async (newTag) => {
   console.log("tagService createNewTag ", JSON.stringify(newTag));
 
   const tagToInsert = {
@@ -31,7 +31,7 @@ const createNewTag = (newTag) => {
 
   //creatae the tag or return an error
   try {
-    const createdTag = tagDB.createNewTag(tagToInsert);
+    const createdTag = await tagDB.createNewTag(tagToInsert);
     return createdTag;
   } catch (error) {
     throw error;
@@ -41,10 +41,10 @@ const createNewTag = (newTag) => {
  
 
 /* get a single tag by id - R */
-const getOneTag = (tagId) => {
+const getOneTag = async (tagId) => {
   console.log("tagService getOneTag ", JSON.stringify(tagId));
   try {
-    const tag = tagDB.getOneTag(tagId);
+    const tag = await tagDB.getOneTag(tagId);
     return tag;
   } catch (error) {
     throw error;
@@ -52,10 +52,10 @@ const getOneTag = (tagId) => {
 
 };
 /* Update an tag - U */
-const updateOneTag = (tagId, changes) => {
+const updateOneTag = async (tagId, changes) => {
   console.log("tagService updateOneTag ", JSON.stringify(tagId));
   try {
-    const updatedTag = tagDB.updateOneTag(tagId, changes);
+    const updatedTag = await tagDB.updateOneTag(tagId, changes);
     return updatedTag;
   } catch (error) {
     throw error;
@@ -63,10 +63,10 @@ const updateOneTag = (tagId, changes) => {
 };
  
 /* Delete an tag - D*/
-const deleteOneTag = (tagId) => {
+const deleteOneTag = async (tagId) => {
   console.log("tagService deleteOneTag ", JSON.stringify(tagId));
   try {
-    tagDB.deleteOneTag(tagId);
+    await tagDB.deleteOneTag(tagId);
     
   } catch (error) {
     throw error;

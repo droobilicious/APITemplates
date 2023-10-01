@@ -50,7 +50,7 @@ const passportCallback = function(err, userData, info){
   }; //end of passport authenticate
 
 /* doLogin- C */
-const doLogin = (creds) => {
+const doLogin = async (creds) => {
 
   console.log("authService doLogin ", JSON.stringify(creds));
 
@@ -75,7 +75,7 @@ const doLogin = (creds) => {
  
 
 /* Create a new Item - C */
-const doSignUp = (newUser) => {
+const doSignUp = async (newUser) => {
   console.log("authService doSignUp ", JSON.stringify(newUser));
 
   /* build new user
@@ -99,8 +99,8 @@ const doSignUp = (newUser) => {
   //create the item or return an error
   try {
     //create and return user
-    // ** also return login token
-    const createdUser = authDB.doSignUp(userToInsert);
+    // TODO: also return login token
+    const createdUser = await authDB.doSignUp(userToInsert);
     return createdUser;
 
   } catch (error) {
@@ -112,7 +112,7 @@ const doSignUp = (newUser) => {
 
  
 /* Create a new Item - C */
-const doTokenExchange = (token) => {
+const doTokenExchange = async (token) => {
   console.log("authService doTokenExchange ", JSON.stringify(token));
 
   const itemToInsert = {
@@ -124,7 +124,7 @@ const doTokenExchange = (token) => {
 
   //creatae the item or return an error
   try {
-    const createdItem = itemDB.createNewItem(itemToInsert);
+    const createdItem = await itemDB.createNewItem(itemToInsert);
     return createdItem;
   } catch (error) {
     throw error;

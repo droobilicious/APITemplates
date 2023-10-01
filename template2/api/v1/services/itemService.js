@@ -4,10 +4,10 @@ const itemDB = require("../database/itemDatabase");
 const { v4: uuid } = require("uuid");
 
 /* get all items */
-const getAllItems = () => {
+const getAllItems = async () => {
   console.log("itemService getAllItems ");
     try {
-      const allItems = itemDB.getAllItems();
+      const allItems = await itemDB.getAllItems();
       return allItems;
     }
     catch (error) {
@@ -19,19 +19,12 @@ const getAllItems = () => {
 
 
 /* Create a new Item - C */
-const createNewItem = (newItem) => {
+const createNewItem = async (newItem) => {
   console.log("itemService createNewItem ", JSON.stringify(newItem));
-
-  const itemToInsert = {
-    ...newItem,
-    id: uuid(),
-    createdAt: new Date().toLocaleString("en-US", { timeZone: "UTC" }),
-    updatedAt: new Date().toLocaleString("en-US", { timeZone: "UTC" }),
-  };
 
   //creatae the item or return an error
   try {
-    const createdItem = itemDB.createNewItem(itemToInsert);
+    const createdItem = await itemDB.createNewItem(newItem);
     return createdItem;
   } catch (error) {
     throw error;
@@ -41,21 +34,23 @@ const createNewItem = (newItem) => {
  
 
 /* get a single item by id - R */
-const getOneItem = (itemId) => {
+const getOneItem = async (itemId) => {
   console.log("itemService getOneItem ", JSON.stringify(itemId));
   try {
-    const item = itemDB.getOneItem(itemId);
+    const item = await itemDB.getOneItem(itemId);
     return item;
   } catch (error) {
     throw error;
   }
 
 };
+
+
 /* Update an item - U */
-const updateOneItem = (itemId, changes) => {
+const updateOneItem = async (itemId, changes) => {
   console.log("itemService updateOneItem ", JSON.stringify(itemId));
   try {
-    const updatedItem = itemDB.updateOneItem(itemId, changes);
+    const updatedItem = await itemDB.updateOneItem(itemId, changes);
     return updatedItem;
   } catch (error) {
     throw error;
@@ -63,10 +58,10 @@ const updateOneItem = (itemId, changes) => {
 };
  
 /* Delete an item - D*/
-const deleteOneItem = (itemId) => {
+const deleteOneItem = async (itemId) => {
   console.log("itemService deleteOneItem ", JSON.stringify(itemId));
   try {
-    itemDB.deleteOneItem(itemId);
+    await itemDB.deleteOneItem(itemId);
     
   } catch (error) {
     throw error;

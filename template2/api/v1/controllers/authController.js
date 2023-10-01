@@ -2,15 +2,12 @@
 
 const authService = require("../services/authService");
 
-
-
-
 // Validation
 const { validationResult } = require('express-validator'); //for form validatio
 
 
 // doLogin
-const doLogin = (req, res) => {
+const doLogin = async (req, res) => {
     console.log("authController doLogin");
     const { body } = req;
 
@@ -20,7 +17,7 @@ const doLogin = (req, res) => {
     if (!result.isEmpty()) 
     {
         console.log("Data was not valid");
-        // ** transform errors to fit standard format?
+        // TODO: transform errors to fit standard format?
         res.status(400)
            .send({
                     status: "FAILED",
@@ -45,7 +42,7 @@ const doLogin = (req, res) => {
 
     // create the item or return an error
     try {
-        const loginResult = authService.doLogin(loginAttempt);
+        const loginResult = await authService.doLogin(loginAttempt);
 
         res.status(201).send({ status: "OK", data: loginResult });
     }
@@ -60,7 +57,7 @@ const doLogin = (req, res) => {
 
 
 //  Sign up
-const doSignUp = (req, res) => {
+const doSignUp = async (req, res) => {
 
     console.log("authController doSignUp");
     const { body } = req;
@@ -73,7 +70,7 @@ const doSignUp = (req, res) => {
     if (!result.isEmpty()) 
     {
         console.log("Data was not valid");
-        // ** transform errors to fit standard format?
+        // TODO: transform errors to fit standard format?
         res.status(400)
            .send({
                     status: "FAILED",
@@ -100,7 +97,7 @@ const doSignUp = (req, res) => {
 
     // create the item or return an error
     try {
-        const createdUser = authService.doSignUp(newUser);
+        const createdUser = await authService.doSignUp(newUser);
         res.status(201).send({ status: "OK", data: createdUser });
     }
     catch (error) {
@@ -114,7 +111,7 @@ const doSignUp = (req, res) => {
 
 
 // Get one item - R
-const doTokenExchange = (req, res) => {
+const doTokenExchange = async (req, res) => {
     console.log("authController doTokenExchange");
     const {
         params: { itemId },

@@ -175,7 +175,7 @@ db.query = async (sql, params) => {
        const data = await db.queryByPromise(sql, params);
        return [data, null];
    }catch(error){
-       console.log("wrapper error");
+       console.log(`wrapper error: ${error}`);
        return [null, error]
    }
 

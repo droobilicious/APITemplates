@@ -2,144 +2,172 @@
 
 const DB = require("./db.json");
 const { saveToDatabase } = require("./utils");
+var db = require("./database.js")
+
+/* Check if user exists */
+const itemExists = async (itemname) => {
+
+  const sql = `SELECT COUNT(*) As count FROM items WHERE name=?`;
+  const params = [itemname];
+
+  const [data, error] = await db.query(sql, params);
+
+  if (error){
+    return [null, error];
+  }
+
+  if (data[0].count){
+    return [true, null];
+  }
+
+  return [false, null];
+
+
+};
+
+
+
+
 
 /* get all items */
-  const getAllItems = () => {
-    console.log("itemDatabase getAllItems");
-    try {
-      return DB.items;
-    } catch (error) {
-      throw { status: 500, message: error };
-    }
-  };
+const getAllItems = async () => {
+
+  const sql = `SELECT * FROM items`;
+  const params = [];
+
+  const [data, error] = await db.query(sql, params);
+
+  if (error){
+
+    throw { status: 500, message: error.code };
+  }
+
+  return data;
+
+};
 
 
 
 
 /* create a new item - C */
-  const createNewItem = (newItem) => {
-    console.log("itemDatabase createNewItem");
+const createNewItem = async (newItem) => {
+  console.log("itemDatabase createNewItem");
 
-    const alreadyExists = DB.items.findIndex((item) => item.name === newItem.name) > -1;
-    if (alreadyExists) {
-      throw {
-        status: 400,
-        message: `Item already exists`,
-      };
-    }
+  //check if item already exists
+  const [alreadyExists, existserror] = await itemExists(newItem.name);
+  if (existserror){
+    throw { status: 400, message: `Error checking item` };
+  }
 
-    // insert into db or return error
-    try {
-      DB.items.push(newItem);
-      saveToDatabase(DB);
-      return newItem;
-    }
-    catch (error) {
-      throw { status: 500, message: error?.message || error };
-    }
+  //stop if item already exists
+  if (alreadyExists){
+    throw { status: 400, message: `Item already exists` };
+  }
 
+  //create item to insert
+  const itemToInsert = {
+    ...newItem,
+    updatedAt: new Date().toISOString()
   };
+
+
+  // insert into db or return error
+  const sql = `INSERT INTO items (name, owner_id, updatedAt) VALUES(?,?,?)`;
+  const params = [itemToInsert.name, itemToInsert.owner_id, itemToInsert.updatedAt];
+  
+  //console.log(`params: ${JSON.stringify(params)}`)
+  const [data, error] = await db.query(sql, params);
+  
+  if (error){
+    throw { status: 500, message: error2?.message || error };
+  }
+
+  return itemToInsert;
+
+};
 
 
 /* Get an item - R */
-  const getOneItem = (itemId) => {
-    console.log("itemDatabase getOneItem");
-    try {
-      const item = DB.items.find( (item) => item.id == itemId);  // changed === to == here because some id's are just integers
-      if (!item) {
-        throw {
-          status: 400,
-          message: `Can't find item with the id '${itemId}'`,
-        };
-      }
-      return item;
-    } catch (error) {
-      throw { status: error?.status || 500, message: error?.message || error };
-    }
-  };
+const getOneItem = async (itemId) => {
+  console.log("itemDatabase getOneItem");
+
+   // insert into db or return error
+   const sql = `SELECT * FROM items WHERE id=?`;
+   const params = [itemId];
+   
+   //console.log(`params: ${JSON.stringify(params)}`)
+   const [data, error] = await db.query(sql, params);
+   
+   if (error){
+     throw { status: error?.status || 500, message: error?.message || error };
+   }
+ 
+   return data;
+
+};
 
 
 /* Update an item - U */
-const updateOneItem = (itemId, changes) => {
+const updateOneItem = async (itemId, changes) => {
   console.log("itemDatabase updateOneItem");
-  try {
-    
-    // check if the new name already exists
-    const alreadyExists = DB.items.findIndex( (item) => item.name === changes.name ) > -1;
 
-    if (alreadyExists) {
-      throw {
-        status: 400,
-        message: `Item with the name '${changes.name}' already exists`,
-      };
-    }
-
-    // find the index of the item to update
-    const indexForUpdate = DB.items.findIndex( (item) => item.id == itemId  );   // changed === to == here because some id's are just integers
-    if (indexForUpdate === -1) {
-      throw {
-        status: 400,
-        message: `Can't find item with the id '${itemId}'`,
-      };
-    }
-
-    // build the updated item
-    const updatedItem = {
-      ...DB.items[indexForUpdate],
-      ...changes,
-      updatedAt: new Date().toLocaleString("en-US", { timeZone: "UTC" }),
-    };
-
-    // make the change
-    DB.items[indexForUpdate] = updatedItem;
-    saveToDatabase(DB);
-
-    //return the updated item
-    return updatedItem;
-
-  } catch (error) {
-    throw { status: error?.status || 500, message: error?.message || error };
+  //check if new item name already exists
+  const [alreadyExists, existserror] = await itemExists(changes.name);
+  if (existserror){
+    throw { status: 400, message: `Error checking item` };
   }
+
+  //stop if item already exists
+  if (alreadyExists){
+    throw { status: 400, message:  `Item with the name '${changes.name}' already exists`};
+  }
+
+
+  // build the updated item
+  const updatedItem = {
+    ...changes,
+    updatedAt: new Date().toISOString(),
+  };
+
+  console.log(`updatedItem: ${JSON.stringify(updatedItem)}`);
+
+   // insert into db or return error
+   const sql = `UPDATE items 
+                SET ${ Object.keys(updatedItem).join("=?, ")}=?
+                WHERE id=?` 
+            
+   const params = [...Object.values(updatedItem), itemId];
+   
+   //console.log(`params: ${JSON.stringify(params)}`)
+   const [data, error] = await db.query(sql, params);
+   
+   if (error){
+     throw { status: 500, message: error2?.message || error };
+   }
+ 
+   return updatedItem;
+ 
 };
 
 /* Delete an item - D */
-const deleteOneItem = (itemId) => {
+const deleteOneItem = async (itemId) => {
   console.log("itemDatabase deleteOneItem");
-  try {
-    const indexForDeletion = DB.items.findIndex( (item) => item.id == itemId );  // changed === to == here because some id's are just integers
 
-    if (indexForDeletion === -1) {
-      throw {
-        status: 400,
-        message: `Can't find item with the id '${itemId}'`,
-      };
-    }
+  const sql = `DELETE FROM items WHERE id=?` 
+  const params = [itemId];
 
-    DB.items.splice(indexForDeletion, 1);
-    saveToDatabase(DB);
+  //console.log(`params: ${JSON.stringify(params)}`)
+  const [data, error] = await db.query(sql, params);
 
-  } catch (error) {
-    throw { status: error?.status || 500, message: error?.message || error };
+  if (error){
+    throw { status: 500, message: error2?.message || error };
   }
+
+  return;
+
 };
 
 
-
-/* get items of a single user */
-/*
-const getUserItems = (user_id) => {
-  return DB.items.filter( item => item.owner_id === user_id);
-}
-*/
-
-
-
-/* move */
-/*
-const getAllTags = () => {
-  return DB.tags;
-};
-*/
 
 module.exports = { 
   getAllItems,

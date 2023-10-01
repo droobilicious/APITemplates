@@ -8,10 +8,10 @@ const { validationResult } = require('express-validator'); //for form validatio
 
 
 // Get all items
-const getAllItems = (req, res) => {
+const getAllItems = async (req, res) => {
     console.log("itemController getAllItems");
     try {
-        const allItems = itemService.getAllItems();
+        const allItems = await itemService.getAllItems();
         res.send({ status: "OK", data: allItems });
     }catch (error) {
         res
@@ -24,7 +24,7 @@ const getAllItems = (req, res) => {
  
 
 // Create new item - C
-const createNewItem = (req, res) => {
+const createNewItem = async (req, res) => {
     console.log("itemController createNewItem");
     const { body } = req;
 
@@ -34,7 +34,7 @@ const createNewItem = (req, res) => {
     if (!result.isEmpty())
     {
         console.log("Data was not valid");
-        // ** transform errors to fit standard format?
+        //  TODO: transform errors to fit standard format?
         res.status(400)
            .send({
                     status: "FAILED",
@@ -59,7 +59,7 @@ const createNewItem = (req, res) => {
 
     // create the item or return an error
     try {
-        const createdItem = itemService.createNewItem(newItem);
+        const createdItem = await itemService.createNewItem(newItem);
         res.status(201).send({ status: "OK", data: createdItem });
     }
     catch (error) {
@@ -73,102 +73,102 @@ const createNewItem = (req, res) => {
 
 
 // Get one item - R
-    const getOneItem = (req, res) => {
-        console.log("itemController getOneItem");
-        const {
-            params: { itemId },
+const getOneItem = async (req, res) => {
+    console.log("itemController getOneItem");
+    const {
+        params: { itemId },
+    } = req;
+    
+    if (!itemId) {
+        res
+        .status(400)
+        .send({
+            status: "FAILED",
+            data: { error: "Parameter ':itemId' cannot be empty" },
+        });
+    }
+
+    try {
+        const item = await itemService.getOneItem(itemId);
+        res.send({ status: "OK", data: item });
+    }
+    catch (error) {
+        res
+            .status(error?.status || 500)
+            .send({ status: "FAILED", data: { error: error?.message || error } });
+        }
+};
+
+
+// Update an Item - U
+const updateOneItem = async (req, res) => {
+    
+    console.log("itemController updateOneItem");
+    const {
+        body,
+        params: { itemId },
         } = req;
-        
+
         if (!itemId) {
-            res
+        res
             .status(400)
             .send({
-              status: "FAILED",
-              data: { error: "Parameter ':itemId' cannot be empty" },
+            status: "FAILED",
+            data: { error: "Parameter ':itemId' cannot be empty" },
             });
         }
 
+        // validation?
+
+        // build item
+        const changedItem = body;
+
+        // Update Item
         try {
-            const item = itemService.getOneItem(itemId);
-            res.send({ status: "OK", data: item });
+        const updatedItem = await itemService.updateOneItem(itemId, changedItem);
+        res.send({ status: "OK", data: updatedItem });
+        } catch (error) {
+        res
+            .status(error?.status || 500)
+            .send({ status: "FAILED", data: { error: error?.message || error } });
         }
-        catch (error) {
-            res
-              .status(error?.status || 500)
-              .send({ status: "FAILED", data: { error: error?.message || error } });
-          }
-    };
-    
+};
 
-// Update an Item - U
-    const updateOneItem = (req, res) => {
-        
-        console.log("itemController updateOneItem");
-        const {
-            body,
-            params: { itemId },
-          } = req;
-
-          if (!itemId) {
-            res
-              .status(400)
-              .send({
-                status: "FAILED",
-                data: { error: "Parameter ':itemId' cannot be empty" },
-              });
-          }
-
-          // validation?
-
-          // build item
-          const changedItem = body;
-
-          // Update Item
-          try {
-            const updatedItem = itemService.updateOneItem(itemId, changedItem);
-            res.send({ status: "OK", data: updatedItem });
-          } catch (error) {
-            res
-              .status(error?.status || 500)
-              .send({ status: "FAILED", data: { error: error?.message || error } });
-          }
-    };
- 
 
 // Delete one item - D
-    const deleteOneItem = (req, res) => {
-        console.log("itemController deleteOneItem");
-        const {
-            params: { itemId },
-          } = req;
+const deleteOneItem = async (req, res) => {
+    console.log("itemController deleteOneItem");
+    const {
+        params: { itemId },
+        } = req;
 
-        if (!itemId) {
-            res
-                .status(400)
-                .send({
-                status: "FAILED",
-                data: { error: "Parameter ':itemId' can not be empty" },
-                });
-        }
+    if (!itemId) {
+        res
+            .status(400)
+            .send({
+            status: "FAILED",
+            data: { error: "Parameter ':itemId' can not be empty" },
+            });
+    }
 
-        //delete item
-        try {
-            console.log("Trying to delete");
-            itemService.deleteOneItem(itemId);
-            res
-                .status(204)
-                .send({ status: "OK" });  //this content isnt sent for a 204.  If doing soft delete then change to status 200
+    //delete item
+    try {
+        console.log("Trying to delete");
+        await itemService.deleteOneItem(itemId);
+        res
+            .status(204)
+            .send({ status: "OK" });  //this content isnt sent for a 204.  If doing soft delete then change to status 200
 
-        } catch (error) {
-            console.log("Error in deleting");
-            res
-                .status(error?.status || 500)
-                .send({ status: "FAILED", data: { error: error?.message || error } });
-        }
-        console.log("done delete");
+    } catch (error) {
+        console.log("Error in deleting");
+        res
+            .status(error?.status || 500)
+            .send({ status: "FAILED", data: { error: error?.message || error } });
+    }
+    console.log("done delete");
 
-    };
- 
+};
+
 module.exports = {
     getAllItems,
     createNewItem, // C
